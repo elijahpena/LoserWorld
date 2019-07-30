@@ -11,4 +11,6 @@
 
 ### Development
 
-Django and Bootstrap were used
+Django and Bootstrap were used for the web dev side of things
+
+I'm using a raspberrypi3 as the server, with nginx for portforwarding and static hosting, and gunicorn as the server software.
