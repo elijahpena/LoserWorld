@@ -15,12 +15,13 @@
                     {% block sidebar %}
                     <ul class="sidebar-nav">
                         <li><a href="{% url 'social:home' %}">Home</a></li>
-                        <li><a href="">Submit</a></li>
+                        <li><a href="{% url 'social:post_create' %}">Submit</a></li>
                         {% if user.is_authenticated %}
                         <li>User: {{ user.get_username }}</li>
                         <li><a href="{% url 'logout' %}?next={{ request.path }}">Logout</a></li>
                         {% else %}
                         <li><a href="{% url 'login' %}?next={{ request.path }}">Login</a></li>
+                        <li><a href="{% url 'create_user' %}?next={{ request.path }}">Create an Account</a></li>
                         {% endif %}
                     </ul>
                     {% endblock %}
