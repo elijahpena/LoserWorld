@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.urls import reverse
 
 # Create your models here.
 
@@ -28,9 +29,16 @@ def save_user_profile(sender, instance, **kwargs):
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    posted_on = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=50)
     content = models.TextField()
     image = models.FileField(blank=True)
+
+    class Meta:
+        ordering = ['-posted_on']
+
+    def get_absolute_url(self):
+        return reverse('social:post_detail', args=[str(self.id)])
 
     def __str__(self):
         return self.title

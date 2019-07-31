@@ -1,0 +1,9 @@
+{% extends 'social/base_generic.html' %}
+{% block content %}
+<h1>{{ post.title }}</h1>
+{% if post.image %}
+<a href=""></a>
+{% endif %}
+<p>{{ post.content }}</p>
+{% endblock %}
+
