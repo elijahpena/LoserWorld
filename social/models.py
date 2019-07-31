@@ -50,5 +50,8 @@ class Comment(models.Model):
     content = models.TextField()
     image = models.FileField(blank=True)
 
+    def get_absolute_url(self):
+        return reverse('social:comment_detail', args=[str(self.post.id), str(self.id)])
+    
     def __str__(self):
         return self.content

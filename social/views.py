@@ -8,7 +8,7 @@ from django.views import generic
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from .models import Profile, Post, Comment
-from .forms import PostForm
+from .forms import PostForm, CommentCreateForm
 
 # Create your views here.
 
@@ -49,3 +49,27 @@ def create_post(request):
 
 class PostDetailView(generic.DetailView):
     model = Post
+
+class CommentCreateView(CreateView):
+    model = Comment
+    fields = ['content', 'image']
+    
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        form.instance.post = Post.objects.get(pk=1)
+        return super(CommentCreateView, self).form_valid(form)
+#    form_class = CommentCreateForm
+#    template_name = 'social/comment_form.html'
+#
+#    def form_valid(self, form):
+#        self.object = form.save(commit=False)
+#        self.object.user = self.request.user
+#        self.object.save()
+#
+#    def get_form_kwargs(self, *args, **kwargs):
+#        kwargs = super(CommentCreateView, self).get_form_kwargs(*args, **kwargs)
+#        kwargs['user'] = self.request.user
+#        return kwargs
+
+class CommentDetailView(generic.DetailView):
+    model = Comment
