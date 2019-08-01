@@ -14,16 +14,3 @@ class ProfileForm(forms.ModelForm):
         model = Profile
         fields = '__all__'
 
-class PostForm(forms.ModelForm):
-    class Meta:
-        model = Post
-        exclude = ['user']
-
-class CommentCreateForm(forms.ModelForm):
-    class Meta:
-        model = Comment
-        exclude = ['user', 'post']
-
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user')
-        super(CommentCreateForm, self).__init__(*args, **kwargs)

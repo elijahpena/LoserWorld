@@ -3,12 +3,11 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from .models import Profile, Post, Comment
-from .forms import PostForm, CommentCreateForm
 
 # Create your views here.
 
@@ -33,19 +32,13 @@ def create_user(request):
         context = {'form': form}
     return render(request, 'registration/create_user.html', context)
 
-def create_post(request):
-    if request.method == 'POST':
-        form = PostForm(request.POST)
+class PostCreateView(CreateView):
+    model = Post
+    fields = ['title', 'content', 'image']
 
-        if form.is_valid():
-            post = Post.objects.create(user=request.user, title=form.cleaned_data['title'], content=form.cleaned_data['content'], image=form.cleaned_data['image'])
-            return HttpResponseRedirect(reverse('social:home'))
-
-    else:
-        form = PostForm()
-
-    context = {'form': form}
-    return render(request, 'social/post_create.html', context)
+    def form_valid(self,form):
+        form.instance.user = self.request.user
+        return super(PostCreateView, self).form_valid(form)
 
 class PostDetailView(generic.DetailView):
     model = Post
@@ -54,22 +47,20 @@ class CommentCreateView(CreateView):
     model = Comment
     fields = ['content', 'image']
     
+    def get_success_url(self):
+        return reverse_lazy('social:post_detail', args=[self.kwargs['post_id']])
+
     def form_valid(self, form):
         form.instance.user = self.request.user
-        form.instance.post = Post.objects.get(pk=1)
+        form.instance.post = Post.objects.get(pk=self.kwargs['post_id'])
         return super(CommentCreateView, self).form_valid(form)
-#    form_class = CommentCreateForm
-#    template_name = 'social/comment_form.html'
-#
-#    def form_valid(self, form):
-#        self.object = form.save(commit=False)
-#        self.object.user = self.request.user
-#        self.object.save()
-#
-#    def get_form_kwargs(self, *args, **kwargs):
-#        kwargs = super(CommentCreateView, self).get_form_kwargs(*args, **kwargs)
-#        kwargs['user'] = self.request.user
-#        return kwargs
+
 
 class CommentDetailView(generic.DetailView):
     model = Comment
+
+class CommentListView(generic.ListView):
+    model = Comment
+
+    def get_queryset(self):
+        return Comment.objects.filter(post=self.kwargs['post_id'])

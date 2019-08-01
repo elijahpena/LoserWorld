@@ -8,7 +8,24 @@ $(document).ready(function() {
             dataType: 'html',
             success: function(text) {
                 $('#new_comment').prepend(text);
+                $('form#comment').attr('action', window.location.href + 'comment_create/');
             }
         });
     });
+
+    function comments() {
+        $.ajax({
+            type: 'GET',
+            url: window.location.href + 'comments/',
+            data: {},
+            dataType: 'html',
+            success: function(text) {
+                $('#comments').append(text);
+                setTimeout(function() {
+                    comments();
+                }, 5000);
+            }
+        });
+    }
+    comments();
 });
