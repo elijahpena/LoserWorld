@@ -5,6 +5,9 @@
 <a href=""></a>
 {% endif %}
 <p>{{ post.content }}</p>
+{% if is_owner %}
+<a href="{% url 'social:post_update' post.pk %}"><button>Edit Post</button></a>
+{% endif %}
 <button id="create_comment">Reply?</button>
 <div id="comments"></div>
 {% endblock %}

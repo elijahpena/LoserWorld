@@ -3,11 +3,13 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from .models import Profile, Post, Comment
+from .helpers import is_owner
 
 # Create your views here.
 
@@ -42,6 +44,20 @@ class PostCreateView(CreateView):
 
 class PostDetailView(generic.DetailView):
     model = Post
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        post = context['post']
+        context['is_owner'] = is_owner(post, self.request.user)
+        return context
+
+class PostUpdateView(UserPassesTestMixin, UpdateView):
+    model = Post
+    fields = ['title', 'content', 'image']
+
+    def test_func(self):
+        post = Post.objects.get(pk=self.kwargs['pk'])
+        return is_owner(post, self.request.user)
 
 class CommentCreateView(CreateView):
     model = Comment

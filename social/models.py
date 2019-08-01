@@ -47,8 +47,12 @@ class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
 
+    posted_on = models.DateTimeField(auto_now_add=True)
     content = models.TextField()
     image = models.FileField(blank=True)
+
+    class Meta:
+        ordering = ['-posted_on']
 
     def get_absolute_url(self):
         return reverse('social:comment_detail', args=[str(self.post.id), str(self.id)])
