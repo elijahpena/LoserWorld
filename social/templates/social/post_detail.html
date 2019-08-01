@@ -5,9 +5,12 @@
 <a href=""></a>
 {% endif %}
 <p>{{ post.content }}</p>
-{% if is_owner %}
-<a href="{% url 'social:post_update' post.pk %}"><button>Edit Post</button></a>
+{% if post.user == user %}
+<a href="{% url 'social:post_update' post.pk %}"><button class="btn btn-link btn-xs">Edit</button></a>
+<a href="{% url 'social:post_delete' post.pk %}"><button class="btn btn-link btn-xs">Delete</button></a>
 {% endif %}
-<button id="create_comment">Reply?</button>
+{% if user.is_authenticated %}
+<button id="create_comment" class="btn btn-link">Reply?</button>
+{% endif %}
 <div id="comments"></div>
 {% endblock %}

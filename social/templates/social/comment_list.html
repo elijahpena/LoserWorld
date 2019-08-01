@@ -1,7 +1,15 @@
 {% if comment_list %}
-<ul>
+<ul class="lists">
     {% for comment in comment_list %}
-    <li><strong>{{ comment.user }}</strong>: {{ comment.content }}</li>
+    <li class="border border-light" id="{{ comment.pk }}">
+        <strong>{{ comment.user }}</strong>: {{ comment.content }}<br>
+        {% if comment.user == user %}
+        <button class="btn btn-link btn-xs" id="{{ comment.pk }}" onClick="edit_comment.call(this, event)">Edit</button>
+        <button class="btn btn-link btn-xs" id="{{ comment.pk }}" onClick="delete_comment.call(this, event)">Delete</button>
+        {% else %}
+        <br>
+        {% endif %}
+    </li>
     {% endfor %}
 </ul>
 {% else %}

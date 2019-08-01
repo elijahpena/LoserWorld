@@ -22,11 +22,40 @@ $(document).ready(function() {
             success: function(text) {
                 $('#comments').html('');
                 $('#comments').append(text);
-                setTimeout(function() {
-                    comments();
-                }, 5000);
             }
         });
     }
     comments();
+
+
 });
+
+function edit_comment(event) {
+    var comment_id = $(this).attr('id');
+    $.ajax({
+        type: 'GET',
+        url: window.location.href + `comment/${comment_id}/update/`,
+        data: {},
+        dataType: 'html',
+        success: function(text) {
+            $(`li#${comment_id}`).html('');
+            $(`li#${comment_id}`).html(text);
+            $('form#comment').attr('action', window.location.href + `comment/${comment_id}/update/`);
+        }
+    });
+}
+
+function delete_comment(event) {
+    var comment_id = $(this).attr('id');
+    $.ajax({
+        type: 'GET',
+        url: window.location.href + `comment/${comment_id}/delete/`,
+        data: {},
+        dataType: 'html',
+        success: function(text) {
+            $(`li#${comment_id}`).html('');
+            $(`li#${comment_id}`).html(text);
+            $('form#comment').attr('action', window.location.href + `comment/${comment_id}/delete/`);
+        }
+    });
+}

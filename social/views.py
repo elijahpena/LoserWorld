@@ -13,12 +13,6 @@ from .helpers import is_owner
 
 # Create your views here.
 
-class PostListView(generic.ListView):
-    model = Post
-    template_name = 'social/home.html'
-    paginate_by = 10
-
-
 def create_user(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -45,11 +39,10 @@ class PostCreateView(CreateView):
 class PostDetailView(generic.DetailView):
     model = Post
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        post = context['post']
-        context['is_owner'] = is_owner(post, self.request.user)
-        return context
+class PostListView(generic.ListView):
+    model = Post
+    template_name = 'social/home.html'
+    paginate_by = 10
 
 class PostUpdateView(UserPassesTestMixin, UpdateView):
     model = Post
@@ -59,7 +52,17 @@ class PostUpdateView(UserPassesTestMixin, UpdateView):
         post = Post.objects.get(pk=self.kwargs['pk'])
         return is_owner(post, self.request.user)
 
-class CommentCreateView(CreateView):
+class PostDeleteView(UserPassesTestMixin, DeleteView):
+    model = Post
+
+    def test_func(self):
+        post = Post.objects.get(pk=self.kwargs['pk'])
+        return is_owner(post, self.request.user)
+
+    def get_success_url(self):
+        return reverse_lazy('social:home')
+
+class CommentCreateView(LoginRequiredMixin, CreateView):
     model = Comment
     fields = ['content', 'image']
     
@@ -75,8 +78,30 @@ class CommentCreateView(CreateView):
 class CommentDetailView(generic.DetailView):
     model = Comment
 
+
 class CommentListView(generic.ListView):
     model = Comment
 
     def get_queryset(self):
         return Comment.objects.filter(post=self.kwargs['post_id'])
+    
+class CommentUpdateView(UserPassesTestMixin, UpdateView):
+    model = Comment
+    fields = ['content', 'image']
+    
+    def test_func(self):
+        comment = Comment.objects.get(pk=self.kwargs['pk'])
+        return is_owner(comment, self.request.user)
+    
+    def get_success_url(self):
+        return reverse_lazy('social:post_detail', args=[self.kwargs['post_id']])
+    
+class CommentDeleteView(UserPassesTestMixin, DeleteView):
+    model = Comment
+    
+    def test_func(self):
+        comment = Comment.objects.get(pk=self.kwargs['pk'])
+        return is_owner(comment, self.request.user)
+
+    def get_success_url(self):
+        return reverse_lazy('social:post_detail', args=[self.kwargs['post_id']])

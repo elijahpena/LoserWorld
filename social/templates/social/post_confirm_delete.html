@@ -1,0 +1,8 @@
+{% extends 'social/base_generic.html' %}
+{% block content %}
+<form method="post" action="">
+    {% csrf_token %}
+    <p text-danger>Are you sure you want to do delete this post? There is no way to undo this.</p>
+    <input type="submit" value="Confirm"> 
+</form>
+{% endblock %}
