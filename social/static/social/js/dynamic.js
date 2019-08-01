@@ -20,6 +20,7 @@ $(document).ready(function() {
             data: {},
             dataType: 'html',
             success: function(text) {
+                $('#comments').html('');
                 $('#comments').append(text);
                 setTimeout(function() {
                     comments();
