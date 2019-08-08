@@ -32,7 +32,7 @@ class Post(models.Model):
     posted_on = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=50)
     content = models.TextField()
-    image = models.FileField(blank=True)
+    image = models.FileField(blank=True, upload_to='%Y/%m/%d')
 
     class Meta:
         ordering = ['-posted_on']
@@ -49,7 +49,7 @@ class Comment(models.Model):
 
     posted_on = models.DateTimeField(auto_now_add=True)
     content = models.TextField()
-    image = models.FileField(blank=True)
+    image = models.FileField(blank=True, upload_to='%Y/%m/%d')
 
     class Meta:
         ordering = ['-posted_on']

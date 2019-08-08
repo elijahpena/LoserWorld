@@ -2,7 +2,7 @@
 {% block content %}
 <h1>{{ post.title }}</h1>
 {% if post.image %}
-<a href=""></a>
+<img src="{{ post.image.url }}">
 {% endif %}
 <p>{{ post.content }}</p>
 {% if post.user == user %}
