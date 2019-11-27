@@ -14,8 +14,8 @@ from .helpers import is_owner
 # Create your views here.
 
 def create_user(request):
+    form = UserCreationForm(request.POST)
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
@@ -23,9 +23,8 @@ def create_user(request):
             user = authenticate(username=username, password=raw_password)
             login(request, user)
             return HttpResponseRedirect(reverse('social:home'))
-    else:
-        form = UserCreationForm()
-        context = {'form': form}
+        
+    context = {'form': form}
     return render(request, 'registration/create_user.html', context)
 
 class PostCreateView(CreateView):
@@ -105,3 +104,6 @@ class CommentDeleteView(UserPassesTestMixin, DeleteView):
 
     def get_success_url(self):
         return reverse_lazy('social:post_detail', args=[self.kwargs['post_id']])
+
+def TeaBrewerView(request):
+    return render(request, 'social/tea_brewer.html')
